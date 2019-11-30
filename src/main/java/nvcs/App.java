@@ -1,26 +1,65 @@
 package nvcs;
 
+import nvcs.ui.AppMenu;
+import nvcs.ui.MainFrame;
+
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.UIManager;
-import javax.swing.WindowConstants;
+
+import static javax.swing.SwingUtilities.invokeLater;
 
 public class App {
 
+    public static final int EXIT_STATUS = 0;
+
+    protected static App app;
+
+    protected JFrame mainFrame;
+
+    /**
+     * Main entry point.
+     *
+     * @param args ignored
+     */
     public static void main(String[] args) {
+        invokeLater(() -> {
+            app = new App();
+            app.show();
+        });
+    }
+
+    public App() {
+        init();
+    }
+
+    public void show() {
+        mainFrame.setVisible(true);
+    }
+
+    protected void init() {
+        initUI();
+    }
+
+    protected void initAppearance() {
         try {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {
         }
+    }
 
-        JFrame window = new JFrame("nvcs");
-        window.setSize(400, 300);
-        window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    protected void initUI() {
+        initAppearance();
 
-        JLabel label = new JLabel("Welcome to nvcs");
-        window.add(label);
+        mainFrame = new MainFrame();
 
-        window.setVisible(true);
+        initMenu();
+    }
+
+    protected void initMenu() {
+        if (mainFrame == null) {
+            throw new IllegalStateException("Unable to init menu because the main frame is null");
+        }
+        mainFrame.setJMenuBar(new AppMenu());
     }
 }
