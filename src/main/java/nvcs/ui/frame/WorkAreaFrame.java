@@ -3,9 +3,9 @@ package nvcs.ui.frame;
 import net.miginfocom.layout.CC;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import nvcs.ui.component.Editor;
 import nvcs.ui.component.ProjectTree;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -39,8 +39,7 @@ public class WorkAreaFrame extends JPanel {
         layoutManager.setComponentConstraints(split, splitConstraints);
 
         split.setLeftComponent(new ProjectTree());
-        // TODO: #2
-        split.setRightComponent(new JLabel("Editor"));
+        split.setRightComponent(new Editor());
 
         invokeLater(() ->
                 split.setDividerLocation(0.2d));
