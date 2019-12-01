@@ -1,4 +1,4 @@
-package nvcs.ui;
+package nvcs.ui.component;
 
 import nvcs.App;
 

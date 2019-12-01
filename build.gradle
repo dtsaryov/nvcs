@@ -7,6 +7,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation 'com.miglayout:miglayout-swing:5.2'
+}
+
 application {
     mainClassName = 'nvcs.App'
 }
