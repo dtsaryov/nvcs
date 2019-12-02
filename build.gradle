@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     implementation 'com.miglayout:miglayout-swing:5.2'
+    implementation 'com.google.guava:guava:28.1-jre'
 }
 
 application {

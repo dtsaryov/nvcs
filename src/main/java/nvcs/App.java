@@ -1,5 +1,7 @@
 package nvcs;
 
+import com.google.common.eventbus.EventBus;
+import nvcs.sys.ProjectIndexer;
 import nvcs.ui.frame.MainFrame;
 
 import javax.swing.JFrame;
@@ -7,13 +9,18 @@ import javax.swing.UIManager;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
+@SuppressWarnings("UnstableApiUsage")
 public class App {
 
     public static final int EXIT_STATUS = 0;
 
     protected static App app;
 
-    protected JFrame mainFrame;
+    protected final JFrame mainFrame;
+
+    protected final EventBus eventBus;
+
+    protected final ProjectIndexer projectIndexer;
 
     /**
      * Main entry point.
@@ -27,14 +34,31 @@ public class App {
         });
     }
 
+    public static App getInstance() {
+        return app;
+    }
+
     public App() {
         initAppearance();
 
+        eventBus = new EventBus();
+
         mainFrame = new MainFrame();
+
+        projectIndexer = new ProjectIndexer();
+        eventBus.register(projectIndexer);
     }
 
     public void show() {
         mainFrame.setVisible(true);
+    }
+
+    public JFrame getMainFrame() {
+        return mainFrame;
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     protected void initAppearance() {
