@@ -11,13 +11,19 @@ import java.util.List;
 public class Project {
 
     protected final ProjectNode root;
+    protected final String projectDir;
 
-    public Project(ProjectNode root) {
+    public Project(ProjectNode root, String projectDir) {
         this.root = root;
+        this.projectDir = projectDir;
     }
 
     public ProjectNode getRoot() {
         return root;
+    }
+
+    public String getProjectDir() {
+        return projectDir;
     }
 
     /**
@@ -43,10 +49,6 @@ public class Project {
 
         public boolean isDirectory() {
             return directory;
-        }
-
-        public ProjectNode getParent() {
-            return parent;
         }
 
         public List<ProjectNode> getChildren() {

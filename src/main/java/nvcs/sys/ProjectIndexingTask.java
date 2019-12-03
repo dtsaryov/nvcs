@@ -46,7 +46,7 @@ class ProjectIndexingTask extends SwingWorker<Project, Void> {
 
         indexChildren(rootDir, rootNode);
 
-        indexedProject = new Project(rootNode);
+        indexedProject = new Project(rootNode, projectDir);
 
         return indexedProject;
     }
