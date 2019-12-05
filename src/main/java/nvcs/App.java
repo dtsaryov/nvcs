@@ -1,7 +1,8 @@
 package nvcs;
 
 import com.google.common.eventbus.EventBus;
-import nvcs.sys.ProjectIndexer;
+import nvcs.sys.project.ProjectIndexer;
+import nvcs.sys.vcs.VCS;
 import nvcs.ui.frame.MainFrame;
 
 import javax.swing.JFrame;
@@ -21,6 +22,7 @@ public class App {
     protected final EventBus eventBus;
 
     protected final ProjectIndexer projectIndexer;
+    protected final VCS vcs;
 
     /**
      * Main entry point.
@@ -47,6 +49,9 @@ public class App {
 
         projectIndexer = new ProjectIndexer();
         eventBus.register(projectIndexer);
+
+        vcs = new VCS();
+        eventBus.register(vcs);
     }
 
     public void show() {

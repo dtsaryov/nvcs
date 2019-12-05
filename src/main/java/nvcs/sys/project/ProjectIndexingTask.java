@@ -1,4 +1,4 @@
-package nvcs.sys;
+package nvcs.sys.project;
 
 import com.google.common.base.Strings;
 import nvcs.App;
