@@ -3,7 +3,6 @@ package nvcs.ui.frame;
 import nvcs.ui.component.AppMenu;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 import java.awt.Dimension;
@@ -32,8 +31,7 @@ public class MainFrame extends JFrame {
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
         split.setTopComponent(new WorkAreaFrame());
-        // TODO: #3
-        split.setBottomComponent(new JLabel("VCS Pane"));
+        split.setBottomComponent(new VcsPanel());
 
         setContentPane(split);
 

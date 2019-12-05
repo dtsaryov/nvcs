@@ -1,8 +1,6 @@
 package nvcs.ui.component;
 
 import com.google.common.eventbus.Subscribe;
-import net.miginfocom.layout.LC;
-import net.miginfocom.swing.MigLayout;
 import nvcs.App;
 import nvcs.event.FileOpenedEvent;
 import nvcs.event.ProjectIndexedEvent;
@@ -10,6 +8,7 @@ import nvcs.event.ProjectOpenedEvent;
 import nvcs.model.Project;
 import nvcs.model.Project.ProjectNode;
 import nvcs.ui.component.adapter.AncestorAdapter;
+import nvcs.util.UIUtils;
 
 import javax.swing.JTree;
 import javax.swing.event.AncestorEvent;
@@ -27,7 +26,7 @@ import java.util.function.Consumer;
 public class ProjectTree extends JTree {
 
     public ProjectTree() {
-        initLayout();
+        UIUtils.expandLayout(this);
 
         TreeModel model = new ProjectTreeModel();
         setModel(model);
@@ -37,15 +36,6 @@ public class ProjectTree extends JTree {
                         .register(model));
 
         addDoubleClickListener(this::handleDoubleClick);
-    }
-
-    protected void initLayout() {
-        LC layoutConstraints = new LC();
-        layoutConstraints.width("100%");
-        layoutConstraints.height("100%");
-
-        MigLayout layoutManager = new MigLayout(layoutConstraints);
-        setLayout(layoutManager);
     }
 
     protected void handleDoubleClick(DefaultMutableTreeNode node) {
