@@ -67,6 +67,10 @@ public class App {
         return eventBus;
     }
 
+    public VCS getVcs() {
+        return vcs;
+    }
+
     protected void initAppearance() {
         try {
             UIManager.setLookAndFeel(

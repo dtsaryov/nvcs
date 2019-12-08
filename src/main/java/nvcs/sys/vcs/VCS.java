@@ -27,6 +27,16 @@ public class VCS {
         eventBus.register(this);
     }
 
+    public void updateStatus() {
+        if (updateStatusTask != null
+                && !updateStatusTask.isDone()) {
+            updateStatusTask.cancel(true);
+        }
+
+        updateStatusTask = new UpdateStatusTask(repository, eventBus);
+        updateStatusTask.execute();
+    }
+
     @Subscribe
     protected void onProjectOpenedEvent(ProjectOpenedEvent e) {
         openRepository(e.getProjectDir());
@@ -55,15 +65,5 @@ public class VCS {
 
         openRepoTask = new OpenRepoTask(projectPath, eventBus);
         openRepoTask.execute();
-    }
-
-    protected void updateStatus() {
-        if (updateStatusTask != null
-                && !updateStatusTask.isDone()) {
-            updateStatusTask.cancel(true);
-        }
-
-        updateStatusTask = new UpdateStatusTask(repository, eventBus);
-        updateStatusTask.execute();
     }
 }
