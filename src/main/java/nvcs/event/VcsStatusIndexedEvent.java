@@ -5,11 +5,18 @@ import nvcs.model.FileStatus;
 import java.util.Collections;
 import java.util.Set;
 
-public class VcsStatusUpdatedEvent {
+/**
+ * The event is fired when project files status is indexed.
+ * <p>
+ * Contains current file statuses in {@link VcsStatusIndexedEvent#getStatuses()}.
+ *
+ * @see FileStatus
+ */
+public class VcsStatusIndexedEvent {
 
     protected final Set<FileStatus> statuses;
 
-    public VcsStatusUpdatedEvent(Set<FileStatus> statuses) {
+    public VcsStatusIndexedEvent(Set<FileStatus> statuses) {
         this.statuses = statuses;
     }
 

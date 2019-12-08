@@ -1,52 +1,30 @@
 package nvcs.ui.component;
 
-import nvcs.App;
-import nvcs.event.ProjectOpenedEvent;
+import nvcs.ui.frame.MainFrame;
 
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-@SuppressWarnings("UnstableApiUsage")
+/**
+ * Application main menu.
+ *
+ * @see MainFrame
+ */
 public class AppMenu extends JMenuBar {
 
+    protected final JMenu menu;
+
     public AppMenu() {
-        JMenu fileMenu = new JMenu("File");
-
-        fileMenu.add(createMenuItem("Open", this::openProject));
-        fileMenu.add(createMenuItem("Exit", this::exit));
-
-        add(fileMenu);
+        menu = new JMenu("File");
+        add(menu);
     }
 
-    protected void openProject() {
-        JFileChooser chooser = new JFileChooser(".");
-
-        chooser.setDialogTitle("Choose project directory");
-        chooser.setDialogType(JFileChooser.OPEN_DIALOG);
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setApproveButtonText("Select");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-        App app = App.getInstance();
-
-        int result = chooser.showOpenDialog(app.getMainFrame());
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            String projectDir = chooser.getSelectedFile()
-                    .getAbsolutePath();
-
-            app.getEventBus()
-                    .post(new ProjectOpenedEvent(projectDir));
-        }
+    public void addItem(String caption, Runnable command) {
+        menu.add(createItem(caption, command));
     }
 
-    protected void exit() {
-        System.exit(App.EXIT_STATUS);
-    }
-
-    protected JMenuItem createMenuItem(String caption, Runnable action) {
+    protected JMenuItem createItem(String caption, Runnable action) {
         JMenuItem item = new JMenuItem(caption);
         item.addActionListener(e -> action.run());
         return item;

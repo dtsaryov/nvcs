@@ -1,28 +1,22 @@
-package nvcs.ui.component;
+package nvcs.ui.component.tree;
 
-import com.google.common.eventbus.Subscribe;
 import nvcs.App;
 import nvcs.event.FileOpenedEvent;
-import nvcs.event.ProjectIndexedEvent;
-import nvcs.event.ProjectOpenedEvent;
 import nvcs.model.Project;
-import nvcs.model.Project.ProjectNode;
 import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.UIUtils;
 
 import javax.swing.JTree;
 import javax.swing.event.AncestorEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Stack;
 import java.util.function.Consumer;
 
-@SuppressWarnings({"UnstableApiUsage", "InnerClassMayBeStatic"})
+@SuppressWarnings("UnstableApiUsage")
 public class ProjectTree extends JTree {
 
     public ProjectTree() {
@@ -47,6 +41,13 @@ public class ProjectTree extends JTree {
         Project project = ((ProjectTreeModel) getModel())
                 .getProject();
 
+        FileOpenedEvent event = new FileOpenedEvent(getFilePath(node, project));
+
+        App.getInstance().getEventBus()
+                .post(event);
+    }
+
+    protected String getFilePath(DefaultMutableTreeNode node, Project project) {
         StringBuilder filePath = new StringBuilder(project.getProjectDir())
                 .append(File.separator);
 
@@ -63,8 +64,7 @@ public class ProjectTree extends JTree {
                             : "");
         }
 
-        App.getInstance().getEventBus()
-                .post(new FileOpenedEvent(filePath.toString()));
+        return filePath.toString();
     }
 
     protected void addComponentAttachListener(Runnable listener) {
@@ -91,49 +91,5 @@ public class ProjectTree extends JTree {
                 }
             }
         });
-    }
-
-    @SuppressWarnings("unused")
-    class ProjectTreeModel extends DefaultTreeModel {
-
-        protected Project project;
-
-        public ProjectTreeModel() {
-            this(new DefaultMutableTreeNode("No project imported"));
-        }
-
-        public ProjectTreeModel(TreeNode root) {
-            super(root);
-        }
-
-        public Project getProject() {
-            return project;
-        }
-
-        @Subscribe
-        protected void onProjectOpenedEvent(ProjectOpenedEvent e) {
-            setRoot(new DefaultMutableTreeNode("Importing..."));
-        }
-
-        @Subscribe
-        protected void onProjectIndexedEvent(ProjectIndexedEvent e) {
-            this.project = e.getProject();
-            setRoot(buildTree(this.project.getRoot()));
-        }
-
-        protected DefaultMutableTreeNode buildTree(ProjectNode projectNode) {
-            DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(
-                    projectNode.getName(),
-                    projectNode.isDirectory());
-
-            if (projectNode.isDirectory()) {
-                projectNode.getChildren()
-                        .parallelStream()
-                        .map(this::buildTree)
-                        .forEach(treeNode::add);
-            }
-
-            return treeNode;
-        }
     }
 }

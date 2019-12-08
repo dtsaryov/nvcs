@@ -1,6 +1,6 @@
 package nvcs.ui.frame;
 
-import nvcs.ui.component.VersionControl;
+import nvcs.ui.component.vcs.VersionControl;
 import nvcs.util.UIUtils;
 
 import javax.swing.JPanel;

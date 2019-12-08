@@ -1,30 +1,57 @@
 package nvcs.ui.frame;
 
+import nvcs.App;
+import nvcs.event.ProjectOpenedEvent;
 import nvcs.ui.component.AppMenu;
+import nvcs.util.UIUtils;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
-import java.awt.Dimension;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
+/**
+ * Application root frame.
+ */
+@SuppressWarnings("UnstableApiUsage")
 public class MainFrame extends JFrame {
 
-    protected static final Dimension DEFAULT_SIZE = new Dimension(1600, 900);
     protected static final double MAIN_SPLIT_DEFAULT_POS = 0.7d;
 
+    protected final JFileChooser fileChooser;
+
     public MainFrame() {
-        setTitle("nvcs");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(DEFAULT_SIZE);
+        setSize(UIUtils.DEFAULT_SIZE);
+        setTitle("nvcs");
+
+        fileChooser = createFileChooser();
 
         initMenu();
         initLayout();
     }
 
+    protected JFileChooser createFileChooser() {
+        JFileChooser chooser = new JFileChooser(".");
+
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setApproveButtonText("Select");
+        chooser.setDialogTitle("Choose project directory");
+        chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        return chooser;
+    }
+
     protected void initMenu() {
-        setJMenuBar(new AppMenu());
+        AppMenu menu = new AppMenu();
+
+        menu.addItem("Open", this::openProject);
+        menu.addItem("Exit", this::exit);
+
+        setJMenuBar(menu);
     }
 
     protected void initLayout() {
@@ -37,5 +64,21 @@ public class MainFrame extends JFrame {
 
         invokeLater(() ->
                 split.setDividerLocation(MAIN_SPLIT_DEFAULT_POS));
+    }
+
+    protected void openProject() {
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String projectDir = fileChooser.getSelectedFile()
+                    .getAbsolutePath();
+
+            App.getInstance().getEventBus()
+                    .post(new ProjectOpenedEvent(projectDir));
+        }
+    }
+
+    protected void exit() {
+        System.exit(App.EXIT_STATUS);
     }
 }

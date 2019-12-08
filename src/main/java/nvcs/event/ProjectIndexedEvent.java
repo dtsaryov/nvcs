@@ -3,7 +3,7 @@ package nvcs.event;
 import nvcs.model.Project;
 
 /**
- * An event that is fired when the project is indexed.
+ * The event is fired when the project is indexed.
  * <p>
  * Contains project structure in {@link ProjectIndexedEvent#getProject()}.
  */

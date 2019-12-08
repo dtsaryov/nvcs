@@ -1,7 +1,14 @@
 package nvcs.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Helper class that contains utility methods for IO.
@@ -18,6 +25,8 @@ public final class IOUtils {
      * @return file name
      */
     public static String getFileName(String filePath) {
+        checkNotNull(filePath, "Null is passed as file path");
+
         return filePath.substring(
                 filePath.lastIndexOf(File.separator) + 1);
     }
@@ -29,6 +38,8 @@ public final class IOUtils {
      * @return file content
      */
     public static String loadFile(String filePath) {
+        checkNotNull(filePath, "Null is passed as file path");
+
         File file = new File(filePath);
 
         try (FileReader reader = new FileReader(file);
@@ -48,6 +59,9 @@ public final class IOUtils {
      * @param fileContent content to save
      */
     public static void saveFile(String filePath, String fileContent) {
+        checkNotNull(filePath, "Null is passed as file path");
+        checkNotNull(fileContent, "Null is passed as file content");
+
         File file = new File(filePath);
 
         try (FileWriter writer = new FileWriter(file);

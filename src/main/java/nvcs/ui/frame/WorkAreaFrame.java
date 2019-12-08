@@ -1,7 +1,7 @@
 package nvcs.ui.frame;
 
-import nvcs.ui.component.Editor;
-import nvcs.ui.component.ProjectTree;
+import nvcs.ui.component.editor.Editor;
+import nvcs.ui.component.tree.ProjectTree;
 import nvcs.util.UIUtils;
 
 import javax.swing.JPanel;

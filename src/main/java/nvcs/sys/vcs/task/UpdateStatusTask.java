@@ -2,17 +2,17 @@ package nvcs.sys.vcs.task;
 
 import com.google.common.eventbus.EventBus;
 import nvcs.model.FileStatus;
-import nvcs.sys.vcs.VCS.StatusesUpdatedEvent;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.SwingWorker;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings({"UnstableApiUsage", "InnerClassMayBeStatic"})
 public class UpdateStatusTask extends SwingWorker<Set<FileStatus>, Void> {
 
     protected final EventBus vcsEventBus;
@@ -52,7 +52,8 @@ public class UpdateStatusTask extends SwingWorker<Set<FileStatus>, Void> {
         }
     }
 
-    protected Set<FileStatus> getWithStatus(Status repositoryStatus, FileStatus.Status status) {
+    protected Set<FileStatus> getWithStatus(Status repositoryStatus,
+                                            FileStatus.Status status) {
         switch (status) {
             case UNTRACKED:
                 return toFileStatus(repositoryStatus.getUntracked(), status);
@@ -75,5 +76,18 @@ public class UpdateStatusTask extends SwingWorker<Set<FileStatus>, Void> {
         return files.stream()
                 .map(file -> FileStatus.of(file, status))
                 .collect(Collectors.toSet());
+    }
+
+    public class StatusesUpdatedEvent {
+
+        protected final Set<FileStatus> statuses;
+
+        public StatusesUpdatedEvent(Set<FileStatus> statuses) {
+            this.statuses = statuses;
+        }
+
+        public Set<FileStatus> getStatuses() {
+            return Collections.unmodifiableSet(statuses);
+        }
     }
 }

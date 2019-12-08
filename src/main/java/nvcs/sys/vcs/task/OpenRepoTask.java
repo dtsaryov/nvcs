@@ -1,14 +1,13 @@
 package nvcs.sys.vcs.task;
 
 import com.google.common.eventbus.EventBus;
-import nvcs.sys.vcs.VCS.RepositoryOpenedEvent;
 import org.eclipse.jgit.api.Git;
 
 import javax.swing.SwingWorker;
 import java.io.File;
 import java.io.IOException;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings({"UnstableApiUsage", "InnerClassMayBeStatic"})
 public class OpenRepoTask extends SwingWorker<Git, Void> {
 
     protected final EventBus vcsEventBus;
@@ -26,9 +25,7 @@ public class OpenRepoTask extends SwingWorker<Git, Void> {
     protected Git doInBackground() {
         File projectDir = new File(projectPath);
         try {
-            repository = Git.open(projectDir);
-
-            return repository;
+            return repository = Git.open(projectDir);
         } catch (IOException ignored) {
             throw new RuntimeException("Failed to open Git repository: " + projectPath);
         }
@@ -39,6 +36,19 @@ public class OpenRepoTask extends SwingWorker<Git, Void> {
         if (!isCancelled()) {
             vcsEventBus.post(
                     new RepositoryOpenedEvent(repository));
+        }
+    }
+
+    public class RepositoryOpenedEvent {
+
+        protected final Git repository;
+
+        public RepositoryOpenedEvent(Git repository) {
+            this.repository = repository;
+        }
+
+        public Git getRepository() {
+            return repository;
         }
     }
 }
