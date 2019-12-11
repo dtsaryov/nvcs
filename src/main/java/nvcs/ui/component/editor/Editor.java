@@ -2,6 +2,7 @@ package nvcs.ui.component.editor;
 
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
+import nvcs.event.FileDeletedEvent;
 import nvcs.event.FileOpenedEvent;
 import nvcs.event.FileEditingEvent;
 import nvcs.ui.component.adapter.AncestorAdapter;
@@ -47,6 +48,21 @@ public class Editor extends JTabbedPane {
         return new EditorTab(fileName, fileContent)
                 .withSaveListener(content ->
                         IOUtils.saveFile(filePath, content))
+                .withDeleteListener(tab -> {
+                    int result = showDeleteFileDialog(tab.getFileName());
+                    switch (result) {
+                        case JOptionPane.YES_OPTION:
+                            IOUtils.deleteFile(filePath);
+
+                            App.getInstance().getEventBus()
+                                    .post(new FileDeletedEvent(fileName));
+
+                            invokeLater(() -> removeTab(tab));
+                            break;
+                        case JOptionPane.NO_OPTION:
+                            break;
+                    }
+                })
                 .withUpdateListener(tab ->
                         App.getInstance().getEventBus()
                                 .post(new FileEditingEvent(
@@ -112,6 +128,18 @@ public class Editor extends JTabbedPane {
                 null,
                 null,
                 JOptionPane.YES_OPTION);
+    }
+
+    protected int showDeleteFileDialog(String fileName) {
+        return JOptionPane.showOptionDialog(
+                App.getInstance().getMainFrame(),
+                "Do you really want to delete file: " + fileName,
+                "Delete file",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                JOptionPane.NO_OPTION);
     }
 
     protected void addComponentAttachListener(Runnable listener) {

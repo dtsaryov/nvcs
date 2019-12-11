@@ -27,6 +27,7 @@ class EditorTab extends JScrollPane {
     protected final TabButton tabButton;
 
     protected Consumer<String> saveListener;
+    protected Consumer<EditorTab> deleteListener;
     protected Consumer<EditorTab> closeListener;
     protected Consumer<EditorTab> updateListener;
 
@@ -41,7 +42,10 @@ class EditorTab extends JScrollPane {
         textArea = createTextArea(fileContent);
         setViewportView(textArea);
 
-        tabButton = new TabButton(fileName, this::onSave, this::onClose);
+        tabButton = new TabButton(fileName)
+                .withSaveListener(this::onSave)
+                .withDeleteListener(this::onDelete)
+                .withCloseListener(this::onClose);
     }
 
     public String getFileName() {
@@ -64,6 +68,11 @@ class EditorTab extends JScrollPane {
 
     public EditorTab withCloseListener(Consumer<EditorTab> tabCloseListener) {
         this.closeListener = tabCloseListener;
+        return this;
+    }
+
+    public EditorTab withDeleteListener(Consumer<EditorTab> deleteListener) {
+        this.deleteListener = deleteListener;
         return this;
     }
 
@@ -118,6 +127,12 @@ class EditorTab extends JScrollPane {
         }
     }
 
+    protected void onDelete() {
+        if (deleteListener != null) {
+            deleteListener.accept(this);
+        }
+    }
+
     protected void onClose() {
         if (closeListener != null) {
             closeListener.accept(this);
@@ -140,28 +155,37 @@ class EditorTab extends JScrollPane {
 
         protected static final String MODIFIED_SUFFIX = " *";
 
+        protected Runnable saveListener = null;
+        protected Runnable deleteListener = null;
+        protected Runnable closeListener = null;
+
         protected final JLabel captionLabel;
 
         protected boolean modified = false;
 
-        TabButton(String tabCaption, Runnable saveListener, Runnable closeListener) {
+        TabButton(String tabCaption) {
             super(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
-            captionLabel = new JLabel(tabCaption);
+            add(captionLabel = new JLabel(tabCaption));
 
-            add(captionLabel);
+            add(createButton("s", "Save file", this::onSave));
+            add(createButton("d", "Delete file", this::onDelete));
+            add(createButton("x", "Close file", this::onClose));
+        }
 
-            JButton saveButton = new JButton("s");
-            saveButton.setToolTipText("Save file");
-            saveButton.addActionListener(e -> saveListener.run());
+        public TabButton withSaveListener(Runnable saveListener) {
+            this.saveListener = saveListener;
+            return this;
+        }
 
-            add(saveButton);
+        public TabButton withDeleteListener(Runnable deleteListener) {
+            this.deleteListener = deleteListener;
+            return this;
+        }
 
-            JButton closeButton = new JButton("x");
-            closeButton.setToolTipText("Close file");
-            closeButton.addActionListener(e -> closeListener.run());
-
-            add(closeButton);
+        public TabButton withCloseListener(Runnable closeListener) {
+            this.closeListener = closeListener;
+            return this;
         }
 
         public void setModified(boolean modified) {
@@ -176,6 +200,31 @@ class EditorTab extends JScrollPane {
                     captionLabel.setText(text.replace(MODIFIED_SUFFIX, ""));
                 }
             }
+        }
+
+        protected void onSave() {
+            if (saveListener != null) {
+                saveListener.run();
+            }
+        }
+
+        protected void onDelete() {
+            if (deleteListener != null) {
+                deleteListener.run();
+            }
+        }
+
+        protected void onClose() {
+            if (closeListener != null) {
+                closeListener.run();
+            }
+        }
+
+        protected JButton createButton(String caption, String description, Runnable action) {
+            JButton button = new JButton(caption);
+            button.setToolTipText(description);
+            button.addActionListener(e -> action.run());
+            return button;
         }
     }
 }

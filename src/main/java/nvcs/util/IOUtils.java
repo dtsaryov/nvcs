@@ -72,4 +72,14 @@ public final class IOUtils {
             throw new RuntimeException("Failed to save file: " + filePath);
         }
     }
+
+    public static void deleteFile(String filePath) {
+        checkNotNull(filePath, "Null os passed as file path");
+
+        boolean deleteSuccessful = new File(filePath).delete();
+
+        if (!deleteSuccessful) {
+            throw new RuntimeException("Failed to delete file");
+        }
+    }
 }

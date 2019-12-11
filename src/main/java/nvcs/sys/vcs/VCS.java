@@ -3,6 +3,7 @@ package nvcs.sys.vcs;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
+import nvcs.event.FileDeletedEvent;
 import nvcs.event.ProjectOpenedEvent;
 import nvcs.event.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
@@ -55,6 +56,11 @@ public class VCS {
 
         App.getInstance().getEventBus()
                 .post(new VcsStatusIndexedEvent(statuses));
+    }
+
+    @Subscribe
+    protected void onFileDeletedEvent(FileDeletedEvent e) {
+        updateStatus();
     }
 
     protected void openRepository(String projectPath) {
