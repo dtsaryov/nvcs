@@ -26,8 +26,9 @@ class EditorTab extends JScrollPane {
     protected final JTextArea textArea;
     protected final TabButton tabButton;
 
-    protected Consumer<String> fileSaveListener = null;
-    protected Consumer<EditorTab> tabCloseListener = null;
+    protected Consumer<String> saveListener;
+    protected Consumer<EditorTab> closeListener;
+    protected Consumer<EditorTab> updateListener;
 
     public EditorTab(String filePath, String fileContent) {
         this.filePath = filePath;
@@ -62,12 +63,17 @@ class EditorTab extends JScrollPane {
     }
 
     public EditorTab withCloseListener(Consumer<EditorTab> tabCloseListener) {
-        this.tabCloseListener = tabCloseListener;
+        this.closeListener = tabCloseListener;
         return this;
     }
 
     public EditorTab withSaveListener(Consumer<String> saveListener) {
-        this.fileSaveListener = saveListener;
+        this.saveListener = saveListener;
+        return this;
+    }
+
+    public EditorTab withUpdateListener(Consumer<EditorTab> updateListener) {
+        this.updateListener = updateListener;
         return this;
     }
 
@@ -96,6 +102,10 @@ class EditorTab extends JScrollPane {
         boolean modified = !fileContent.equals(textArea.getText());
 
         setModified(modified);
+
+        if (updateListener != null) {
+            updateListener.accept(this);
+        }
     }
 
     protected void onSave() {
@@ -103,14 +113,14 @@ class EditorTab extends JScrollPane {
 
         fileContent = textArea.getText();
 
-        if (fileSaveListener != null) {
-            fileSaveListener.accept(fileContent);
+        if (saveListener != null) {
+            saveListener.accept(fileContent);
         }
     }
 
     protected void onClose() {
-        if (tabCloseListener != null) {
-            tabCloseListener.accept(this);
+        if (closeListener != null) {
+            closeListener.accept(this);
         }
     }
 

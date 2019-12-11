@@ -1,11 +1,14 @@
 package nvcs.ui.component.vcs;
 
 import com.google.common.eventbus.Subscribe;
+import nvcs.event.FileEditingEvent;
 import nvcs.event.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
 
-import javax.swing.DefaultListModel;
-import java.util.Set;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.util.*;
+import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
 class VersionListModel extends DefaultListModel<FileStatus> {
@@ -13,12 +16,52 @@ class VersionListModel extends DefaultListModel<FileStatus> {
     @Subscribe
     protected void onVcsStatusUpdatedEvent(VcsStatusIndexedEvent e) {
         Set<FileStatus> statuses = e.getStatuses();
+        Map<String, FileStatus> dirtyStatuses = collectDirtyStatuses();
 
         clear();
 
-        int idx = 0;
-        for (FileStatus fileStatus : statuses) {
-            add(idx++, fileStatus);
+        Stream.concat(dirtyStatuses.values().stream(),
+                statuses.stream().filter(fs -> !dirtyStatuses.containsKey(fs.getFileName())))
+                .sorted(Comparator.comparing(FileStatus::getFileName))
+                .forEach(fs -> add(getSize(), fs));
+    }
+
+    @Subscribe
+    protected void onFileUpdatedEvent(FileEditingEvent e) {
+        String fileName = e.getFileName();
+
+        FileStatus currentStatus = getCurrentStatus(fileName);
+
+        if (currentStatus != null) {
+            set(indexOf(currentStatus), currentStatus.dirty());
+        } else {
+            add(getSize(), new FileStatus(
+                    fileName,
+                    FileStatus.Status.MODIFIED,
+                    true));
         }
+    }
+
+    @Nullable
+    protected FileStatus getCurrentStatus(String fileName) {
+        for (int i = 0; i < getSize(); i++) {
+            FileStatus fileStatus = get(i);
+            if (fileStatus.getFileName()
+                    .startsWith(fileName)) {
+                return fileStatus;
+            }
+        }
+        return null;
+    }
+
+    protected Map<String, FileStatus> collectDirtyStatuses() {
+        Map<String, FileStatus> dirtyStatuses = new HashMap<>();
+        for (int i = 0; i < getSize(); i++) {
+            FileStatus fileStatus = get(i);
+            if (fileStatus.isDirty()) {
+                dirtyStatuses.put(fileStatus.getFileName(), fileStatus);
+            }
+        }
+        return dirtyStatuses;
     }
 }

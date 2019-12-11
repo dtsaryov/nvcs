@@ -3,6 +3,7 @@ package nvcs.ui.component.editor;
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
 import nvcs.event.FileOpenedEvent;
+import nvcs.event.FileEditingEvent;
 import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.IOUtils;
 
@@ -46,6 +47,10 @@ public class Editor extends JTabbedPane {
         return new EditorTab(fileName, fileContent)
                 .withSaveListener(content ->
                         IOUtils.saveFile(filePath, content))
+                .withUpdateListener(tab ->
+                        App.getInstance().getEventBus()
+                                .post(new FileEditingEvent(
+                                        tab.getFileName())))
                 .withCloseListener(tab -> {
                     if (!tab.isModified()) {
                         invokeLater(() -> removeTab(tab));
