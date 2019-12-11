@@ -10,6 +10,7 @@ import nvcs.model.FileStatus;
 import nvcs.sys.vcs.task.OpenRepoTask;
 import nvcs.sys.vcs.task.UpdateStatusTask;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import java.util.Set;
 
@@ -36,6 +37,15 @@ public class VCS {
 
         updateStatusTask = new UpdateStatusTask(repository, eventBus);
         updateStatusTask.execute();
+    }
+
+    public void revertFile(String fileName) {
+        try {
+            repository.checkout()
+                    .addPath(fileName)
+                    .call();
+        } catch (GitAPIException ignored) {
+        }
     }
 
     @Subscribe

@@ -5,31 +5,23 @@ import nvcs.model.FileStatus;
 import nvcs.ui.component.adapter.AncestorAdapter;
 
 import javax.swing.JList;
-import javax.swing.JScrollPane;
 import javax.swing.event.AncestorEvent;
 
-@SuppressWarnings({"InnerClassMayBeStatic", "UnstableApiUsage"})
-public class VersionControl extends JScrollPane {
+@SuppressWarnings("UnstableApiUsage")
+public class VersionControl extends JList<FileStatus> {
+
+    protected VersionListModel model;
 
     public VersionControl() {
-        setViewportView(new VersionList());
-    }
+        model = new VersionListModel();
+        setModel(model);
 
-    class VersionList extends JList<FileStatus> {
-
-        protected VersionListModel model;
-
-        public VersionList() {
-            model = new VersionListModel();
-            setModel(model);
-
-            addAncestorListener(new AncestorAdapter() {
-                @Override
-                public void ancestorAdded(AncestorEvent event) {
-                    App.getInstance().getEventBus()
-                            .register(model);
-                }
-            });
-        }
+        addAncestorListener(new AncestorAdapter() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                App.getInstance().getEventBus()
+                        .register(model);
+            }
+        });
     }
 }
