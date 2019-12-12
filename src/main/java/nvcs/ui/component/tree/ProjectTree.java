@@ -1,7 +1,7 @@
 package nvcs.ui.component.tree;
 
 import nvcs.App;
-import nvcs.event.FileOpenedEvent;
+import nvcs.event.file.FileOpenedEvent;
 import nvcs.model.Project;
 import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.UIUtils;

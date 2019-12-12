@@ -1,4 +1,4 @@
-package nvcs.event;
+package nvcs.event.file;
 
 /**
  * The event is fired when project file is deleted.

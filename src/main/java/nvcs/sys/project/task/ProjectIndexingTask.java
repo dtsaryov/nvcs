@@ -2,7 +2,7 @@ package nvcs.sys.project.task;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
-import nvcs.event.ProjectIndexedEvent;
+import nvcs.event.project.ProjectIndexedEvent;
 import nvcs.model.Project;
 import nvcs.model.Project.ProjectNode;
 import nvcs.sys.project.ProjectIndexer;

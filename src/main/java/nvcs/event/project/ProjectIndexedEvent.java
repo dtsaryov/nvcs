@@ -1,4 +1,4 @@
-package nvcs.event;
+package nvcs.event.project;
 
 import nvcs.model.Project;
 

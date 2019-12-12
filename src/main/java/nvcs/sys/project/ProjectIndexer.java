@@ -3,8 +3,8 @@ package nvcs.sys.project;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
-import nvcs.event.ProjectIndexedEvent;
-import nvcs.event.ProjectOpenedEvent;
+import nvcs.event.project.ProjectIndexedEvent;
+import nvcs.event.project.ProjectOpenedEvent;
 import nvcs.sys.project.task.ProjectIndexingTask;
 
 /**

@@ -1,8 +1,9 @@
 package nvcs.ui.component.vcs;
 
 import com.google.common.eventbus.Subscribe;
-import nvcs.event.FileEditingEvent;
-import nvcs.event.VcsStatusIndexedEvent;
+import nvcs.event.file.FileEditingEvent;
+import nvcs.event.file.FileSavedEvent;
+import nvcs.event.vcs.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
 
 import javax.annotation.Nullable;
@@ -39,6 +40,18 @@ class VersionListModel extends DefaultListModel<FileStatus> {
                     fileName,
                     FileStatus.Status.MODIFIED,
                     true));
+        }
+    }
+
+    @Subscribe
+    protected void onFileSaved(FileSavedEvent e) {
+        String fileName = e.getFileName();
+        for (int i = 0; i < getSize(); i++) {
+            FileStatus fileStatus = get(i);
+            if (fileName.equals(fileStatus.getFileName())) {
+                set(i, fileStatus.clean());
+                break;
+            }
         }
     }
 

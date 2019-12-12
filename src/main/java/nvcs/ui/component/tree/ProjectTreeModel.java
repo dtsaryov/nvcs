@@ -1,9 +1,9 @@
 package nvcs.ui.component.tree;
 
 import com.google.common.eventbus.Subscribe;
-import nvcs.event.FileDeletedEvent;
-import nvcs.event.ProjectIndexedEvent;
-import nvcs.event.ProjectOpenedEvent;
+import nvcs.event.file.FileDeletedEvent;
+import nvcs.event.project.ProjectIndexedEvent;
+import nvcs.event.project.ProjectOpenedEvent;
 import nvcs.model.Project;
 
 import javax.swing.tree.DefaultMutableTreeNode;

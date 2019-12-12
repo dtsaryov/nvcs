@@ -1,4 +1,4 @@
-package nvcs.event;
+package nvcs.event.project;
 
 /**
  * The event is fired when the project directory is opened.

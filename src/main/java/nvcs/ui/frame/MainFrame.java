@@ -1,7 +1,7 @@
 package nvcs.ui.frame;
 
 import nvcs.App;
-import nvcs.event.ProjectOpenedEvent;
+import nvcs.event.project.ProjectOpenedEvent;
 import nvcs.ui.component.AppMenu;
 import nvcs.util.UIUtils;
 

@@ -3,9 +3,10 @@ package nvcs.sys.vcs;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
-import nvcs.event.FileDeletedEvent;
-import nvcs.event.ProjectOpenedEvent;
-import nvcs.event.VcsStatusIndexedEvent;
+import nvcs.event.file.FileDeletedEvent;
+import nvcs.event.file.FileSavedEvent;
+import nvcs.event.project.ProjectOpenedEvent;
+import nvcs.event.vcs.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
 import nvcs.sys.vcs.task.OpenRepoTask;
 import nvcs.sys.vcs.task.UpdateStatusTask;
@@ -50,6 +51,8 @@ public class VCS {
                     .call();
         } catch (GitAPIException ignored) {
         }
+
+        updateStatus();
     }
 
     @Subscribe
@@ -93,6 +96,11 @@ public class VCS {
 
         App.getInstance().getEventBus()
                 .post(new VcsStatusIndexedEvent(statuses));
+    }
+
+    @Subscribe
+    protected void onFileSaved(FileSavedEvent e) {
+        updateStatus();
     }
 
     @Subscribe

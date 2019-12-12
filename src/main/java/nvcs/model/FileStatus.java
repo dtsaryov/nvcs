@@ -36,6 +36,10 @@ public class FileStatus {
         return new FileStatus(fileName, status, true);
     }
 
+    public FileStatus clean() {
+        return new FileStatus(fileName, status, false);
+    }
+
     public static FileStatus of(String fileName, Status status) {
         return new FileStatus(fileName, status);
     }

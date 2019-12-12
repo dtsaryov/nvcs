@@ -2,9 +2,10 @@ package nvcs.ui.component.editor;
 
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
-import nvcs.event.FileDeletedEvent;
-import nvcs.event.FileOpenedEvent;
-import nvcs.event.FileEditingEvent;
+import nvcs.event.file.FileDeletedEvent;
+import nvcs.event.file.FileOpenedEvent;
+import nvcs.event.file.FileEditingEvent;
+import nvcs.event.file.FileSavedEvent;
 import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.IOUtils;
 
@@ -13,6 +14,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.AncestorEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
@@ -46,54 +48,22 @@ public class Editor extends JTabbedPane {
         String fileName = IOUtils.getFileName(filePath);
 
         return new EditorTab(fileName, fileContent)
+                .withUpdateListener(this::onTabUpdate)
                 .withSaveListener(content ->
-                        IOUtils.saveFile(filePath, content))
-                .withDeleteListener(tab -> {
-                    int result = showDeleteFileDialog(tab.getFileName());
-                    switch (result) {
-                        case JOptionPane.YES_OPTION:
-                            IOUtils.deleteFile(filePath);
-
-                            App.getInstance().getEventBus()
-                                    .post(new FileDeletedEvent(fileName));
-
-                            invokeLater(() -> removeTab(tab));
-                            break;
-                        case JOptionPane.NO_OPTION:
-                            break;
-                    }
-                })
-                .withUpdateListener(tab ->
-                        App.getInstance().getEventBus()
-                                .post(new FileEditingEvent(
-                                        tab.getFileName())))
-                .withCloseListener(tab -> {
-                    if (!tab.isModified()) {
-                        invokeLater(() -> removeTab(tab));
-                        return;
-                    }
-
-                    int result = showUnsavedChangesDialog();
-                    switch (result) {
-                        case JOptionPane.YES_OPTION:
-                            IOUtils.saveFile(filePath, tab.getFileContent());
-                            invokeLater(() -> removeTab(tab));
-                            break;
-                        case JOptionPane.NO_OPTION:
-                            invokeLater(() -> removeTab(tab));
-                            break;
-                        case JOptionPane.CANCEL_OPTION:
-                    }
-                });
+                        onTabSave(filePath, fileName, content))
+                .withDeleteListener(tab ->
+                        onTabDelete(filePath, fileName, tab))
+                .withCloseListener(tab ->
+                        onTabClose(filePath, fileName, tab));
     }
 
     protected void addTab(EditorTab editorTab) {
-        int tabIdx = getTabCount();
+        int newTabIdx = getTabCount();
 
         openedTabs.add(editorTab);
 
         addTab(editorTab.getFileName(), editorTab);
-        setTabComponentAt(tabIdx, editorTab.getTabButton());
+        setTabComponentAt(newTabIdx, editorTab.getTabButton());
     }
 
     protected void removeTab(EditorTab tab) {
@@ -106,7 +76,7 @@ public class Editor extends JTabbedPane {
     protected boolean isTabOpened(String fileName) {
         return openedTabs.stream()
                 .anyMatch(tab ->
-                        tab.getFileName().equals(fileName));
+                        Objects.equals(tab.getFileName(), fileName));
     }
 
     protected int getTabIndex(EditorTab tab) {
@@ -116,6 +86,61 @@ public class Editor extends JTabbedPane {
             }
         }
         return -1;
+    }
+
+    protected void onTabClose(String filePath, String fileName, EditorTab tab) {
+        if (!tab.isModified()) {
+            invokeLater(() ->
+                    removeTab(tab));
+            return;
+        }
+
+        int result = showUnsavedChangesDialog();
+        switch (result) {
+            case JOptionPane.YES_OPTION: {
+                IOUtils.saveFile(filePath, tab.getFileContent());
+
+                App.getInstance().getEventBus()
+                        .post(new FileSavedEvent(fileName));
+
+                invokeLater(() ->
+                        removeTab(tab));
+                break;
+            }
+            case JOptionPane.NO_OPTION: {
+                invokeLater(() ->
+                        removeTab(tab));
+            }
+        }
+    }
+
+    protected void onTabUpdate(EditorTab tab) {
+        App.getInstance().getEventBus()
+                .post(new FileEditingEvent(
+                        tab.getFileName()));
+    }
+
+    protected void onTabDelete(String filePath, String fileName, EditorTab tab) {
+        int result = showDeleteFileDialog(tab.getFileName());
+        switch (result) {
+            case JOptionPane.YES_OPTION:
+                IOUtils.deleteFile(filePath);
+
+                App.getInstance().getEventBus()
+                        .post(new FileDeletedEvent(fileName));
+
+                invokeLater(() -> removeTab(tab));
+                break;
+            case JOptionPane.NO_OPTION:
+                break;
+        }
+    }
+
+    protected void onTabSave(String filePath, String fileName, String content) {
+        IOUtils.saveFile(filePath, content);
+
+        App.getInstance().getEventBus()
+                .post(new FileSavedEvent(fileName));
     }
 
     protected int showUnsavedChangesDialog() {

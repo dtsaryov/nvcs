@@ -1,4 +1,4 @@
-package nvcs.event;
+package nvcs.event.vcs;
 
 import nvcs.model.FileStatus;
 
