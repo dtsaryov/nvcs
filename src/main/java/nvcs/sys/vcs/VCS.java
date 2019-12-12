@@ -12,10 +12,14 @@ import nvcs.sys.vcs.task.UpdateStatusTask;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import javax.swing.JOptionPane;
+import java.io.File;
 import java.util.Set;
 
 @SuppressWarnings("UnstableApiUsage")
 public class VCS {
+
+    protected static final String GIT_FOLDER = ".git";
 
     protected final EventBus eventBus;
 
@@ -50,7 +54,30 @@ public class VCS {
 
     @Subscribe
     protected void onProjectOpenedEvent(ProjectOpenedEvent e) {
-        openRepository(e.getProjectDir());
+        String projectDirPath = e.getProjectDir();
+
+        if (hasGitFolder(projectDirPath)) {
+            openRepository(projectDirPath);
+        } else {
+            JOptionPane.showMessageDialog(App.getInstance().getMainFrame(),
+                    "Project is not under version control");
+        }
+    }
+
+    /**
+     * Checks the project is under version control
+     *
+     * @param projectDirPath project directory path
+     * @return true if .git folder is found or false otherwise
+     */
+    protected boolean hasGitFolder(String projectDirPath) {
+        File projectDir = new File(projectDirPath);
+
+        File[] files = projectDir.listFiles((dir, name) ->
+                GIT_FOLDER.equals(name));
+
+        return files != null
+                && files.length == 1;
     }
 
     @Subscribe

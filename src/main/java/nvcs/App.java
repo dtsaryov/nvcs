@@ -17,9 +17,9 @@ public class App {
 
     protected static App app;
 
-    protected final EventBus eventBus;
-
     protected final JFrame mainFrame;
+
+    protected final EventBus eventBus;
 
     protected final ProjectIndexer projectIndexer;
 
