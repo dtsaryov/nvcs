@@ -33,7 +33,7 @@ class ProjectTreeModel extends DefaultTreeModel {
     }
 
     @Subscribe
-    protected void onProjectOpenedEvent(ProjectOpenedEvent e) {
+    protected void onProjectOpened(ProjectOpenedEvent e) {
         setRoot(new DefaultMutableTreeNode("Importing..."));
     }
 

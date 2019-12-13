@@ -3,16 +3,25 @@ package nvcs.ui.component.vcs;
 import com.google.common.eventbus.Subscribe;
 import nvcs.event.file.FileEditingEvent;
 import nvcs.event.file.FileSavedEvent;
+import nvcs.event.project.ProjectOpenedEvent;
 import nvcs.event.vcs.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
 
 import javax.annotation.Nullable;
-import javax.swing.*;
-import java.util.*;
+import javax.swing.DefaultListModel;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
 class VersionListModel extends DefaultListModel<FileStatus> {
+
+    @Subscribe
+    protected void onProjectOpened(ProjectOpenedEvent e) {
+        clear();
+    }
 
     @Subscribe
     protected void onVcsStatusUpdatedEvent(VcsStatusIndexedEvent e) {

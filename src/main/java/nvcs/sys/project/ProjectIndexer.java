@@ -26,7 +26,7 @@ public class ProjectIndexer {
     }
 
     @Subscribe
-    protected void onProjectOpenedEvent(ProjectOpenedEvent e) {
+    protected void onProjectOpened(ProjectOpenedEvent e) {
         if (indexingTask != null
                 && !indexingTask.isDone()) {
             indexingTask.cancel(true);

@@ -56,7 +56,7 @@ public class VCS {
     }
 
     @Subscribe
-    protected void onProjectOpenedEvent(ProjectOpenedEvent e) {
+    protected void onProjectOpened(ProjectOpenedEvent e) {
         String projectDirPath = e.getProjectDir();
 
         if (hasGitFolder(projectDirPath)) {
