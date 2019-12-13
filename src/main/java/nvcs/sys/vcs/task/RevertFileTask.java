@@ -40,7 +40,7 @@ public class RevertFileTask extends SwingWorker<Boolean, Void> {
     @Override
     protected void done() {
         if (!isCancelled()) {
-            vcsEventBus.post(new FileRevertedEvent());
+            vcsEventBus.post(new FileRevertedEvent(filePath));
         }
     }
 
@@ -48,5 +48,15 @@ public class RevertFileTask extends SwingWorker<Boolean, Void> {
      * The event is used to notify {@link VCS} that file reverted.
      */
     public class FileRevertedEvent {
+
+        protected final String filePath;
+
+        public FileRevertedEvent(String filePath) {
+            this.filePath = filePath;
+        }
+
+        public String getFilePath() {
+            return filePath;
+        }
     }
 }

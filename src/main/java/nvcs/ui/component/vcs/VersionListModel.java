@@ -30,10 +30,10 @@ class VersionListModel extends DefaultListModel<FileStatus> {
 
         clear();
 
-        Stream.concat(dirtyStatuses.values().stream(),
-                statuses.stream().filter(fs -> !dirtyStatuses.containsKey(fs.getFileName())))
+        Stream.concat(dirtyStatuses.values().stream(), statuses.stream())
                 .sorted(Comparator.comparing(FileStatus::getFileName))
-                .forEach(fs -> add(getSize(), fs));
+                .forEach(fs ->
+                        add(getSize(), fs));
     }
 
     @Subscribe

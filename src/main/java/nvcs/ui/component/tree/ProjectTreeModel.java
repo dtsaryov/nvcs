@@ -4,13 +4,16 @@ import com.google.common.eventbus.Subscribe;
 import nvcs.event.file.FileDeletedEvent;
 import nvcs.event.project.ProjectIndexedEvent;
 import nvcs.event.project.ProjectOpenedEvent;
+import nvcs.event.vcs.FileRevertedEvent;
 import nvcs.model.Project;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.List;
 
 import static javax.swing.SwingUtilities.invokeLater;
@@ -21,7 +24,7 @@ class ProjectTreeModel extends DefaultTreeModel {
     protected Project project;
 
     public ProjectTreeModel() {
-        this(new DefaultMutableTreeNode("No project imported"));
+        this(new ModelNode("No project imported"));
     }
 
     public ProjectTreeModel(TreeNode root) {
@@ -34,7 +37,7 @@ class ProjectTreeModel extends DefaultTreeModel {
 
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
-        setRoot(new DefaultMutableTreeNode("Importing..."));
+        setRoot(new ModelNode("Importing..."));
     }
 
     @Subscribe
@@ -47,11 +50,16 @@ class ProjectTreeModel extends DefaultTreeModel {
 
     @Subscribe
     protected void onFileDeletedEvent(FileDeletedEvent e) {
-        deleteNode(((DefaultMutableTreeNode) getRoot()), e.getFileName());
+        deleteNode(((ModelNode) getRoot()), e.getFileName());
     }
 
-    protected DefaultMutableTreeNode buildTree(Project.ProjectNode projectNode) {
-        DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(
+    @Subscribe
+    protected void onFileReverted(FileRevertedEvent e) {
+        revertNode(((ModelNode) getRoot()), e.getFilePath());
+    }
+
+    protected ModelNode buildTree(Project.ProjectNode projectNode) {
+        ModelNode treeNode = new ModelNode(
                 projectNode.getName(),
                 projectNode.isDirectory());
 
@@ -65,16 +73,17 @@ class ProjectTreeModel extends DefaultTreeModel {
         return treeNode;
     }
 
-    protected void deleteNode(DefaultMutableTreeNode parentNode, String fileName) {
-        List<DefaultMutableTreeNode> folders = new ArrayList<>();
+    protected void deleteNode(ModelNode parentNode, String fileName) {
+        List<ModelNode> folders = new ArrayList<>();
 
         boolean deleted = false;
 
         for (int i = 0; i < parentNode.getChildCount(); i++) {
-            DefaultMutableTreeNode node =
-                    (DefaultMutableTreeNode) parentNode.getChildAt(i);
+            ModelNode node =
+                    (ModelNode) parentNode.getChildAt(i);
 
-            if (fileName.equals(node.getUserObject())) {
+            if (!node.getAllowsChildren()
+                    && fileName.equals(node.getUserObject())) {
                 parentNode.remove(i);
 
                 deleted = true;
@@ -93,6 +102,64 @@ class ProjectTreeModel extends DefaultTreeModel {
         if (!deleted) {
             folders.forEach(f ->
                     deleteNode(f, fileName));
+        }
+    }
+
+    protected void revertNode(ModelNode parentNode, String filePath) {
+        int slashIdx = filePath.indexOf('/');
+
+        if (slashIdx > 0) {
+            String dirName = filePath.substring(0, slashIdx);
+
+            for (int i = 0; i < parentNode.getChildCount(); i++) {
+                ModelNode node =
+                        (ModelNode) parentNode.getChildAt(i);
+
+                if (node.getAllowsChildren()
+                        && dirName.equals(node.getUserObject())) {
+                    revertNode(node, filePath.substring(slashIdx + 1));
+                    break;
+                }
+            }
+        } else {
+            addLeaf(parentNode, filePath);
+        }
+    }
+
+    protected void addLeaf(ModelNode parentNode, String nodeName) {
+        ModelNode leaf = new ModelNode(nodeName);
+
+        List<ModelNode> children = Collections.list(parentNode.children());
+        children.add(leaf);
+
+        children.sort(Comparator.comparing(ModelNode::getUserObject));
+
+        parentNode.removeAllChildren();
+        children.forEach(parentNode::add);
+
+        invokeLater(() ->
+                reload(parentNode));
+    }
+    
+    static class ModelNode extends DefaultMutableTreeNode {
+
+        public ModelNode(String userObject) {
+            this(userObject, false);
+        }
+
+        public ModelNode(Object userObject, boolean allowsChildren) {
+            super(userObject, allowsChildren);
+        }
+
+        @Override
+        public String getUserObject() {
+            return (String) super.getUserObject();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Enumeration<ModelNode> children() {
+            return super.children();
         }
     }
 }

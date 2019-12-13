@@ -6,6 +6,7 @@ import nvcs.App;
 import nvcs.event.file.FileDeletedEvent;
 import nvcs.event.file.FileSavedEvent;
 import nvcs.event.project.ProjectOpenedEvent;
+import nvcs.event.vcs.FileRevertedEvent;
 import nvcs.event.vcs.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
 import nvcs.sys.vcs.task.OpenRepoTask;
@@ -88,6 +89,9 @@ public class VCS {
 
     @Subscribe
     protected void onFileReverted(RevertFileTask.FileRevertedEvent e) {
+        App.getInstance().getEventBus()
+                .post(new FileRevertedEvent(e.getFilePath()));
+
         refreshStatus();
     }
 
