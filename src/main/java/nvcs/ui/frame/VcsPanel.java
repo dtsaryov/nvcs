@@ -8,8 +8,12 @@ import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.ui.component.vcs.VersionControl;
 import nvcs.util.UIUtils;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.event.AncestorEvent;
+
+import static nvcs.util.Messages.showMessage;
 
 @SuppressWarnings("UnstableApiUsage")
 public class VcsPanel extends JPanel {
@@ -44,47 +48,54 @@ public class VcsPanel extends JPanel {
     protected void initButtonsPanel() {
         JPanel buttonsPanel = new JPanel();
 
-        buttonsPanel.add(createRefreshButton());
-        buttonsPanel.add(createRevertButton());
+        buttonsPanel.add(refreshButton = createRefreshButton());
+        buttonsPanel.add(revertButton = createRevertButton());
 
         add(buttonsPanel, "wrap");
     }
 
     protected JButton createRefreshButton() {
-        refreshButton = new JButton("Refresh");
+        JButton refreshButton = new JButton("Refresh");
         refreshButton.setToolTipText("Triggers VCS status refresh");
         refreshButton.setEnabled(false);
-
-        refreshButton.addActionListener(e ->
-                App.getInstance().getVcs()
-                        .updateStatus());
-
+        refreshButton.addActionListener(e -> refreshVcsStatus());
         return refreshButton;
     }
 
     protected JButton createRevertButton() {
-        revertButton = new JButton("Revert");
+        JButton revertButton = new JButton("Revert");
         revertButton.setToolTipText("Triggers last snapshot of the selected file");
         revertButton.setEnabled(false);
-
-        revertButton.addActionListener(e -> {
-            FileStatus versionedFile = versionControl.getSelectedValue();
-            if (versionedFile != null) {
-                if (versionedFile.getStatus() == FileStatus.Status.MODIFIED
-                        || versionedFile.getStatus() == FileStatus.Status.MISSING) {
-                    App.getInstance().getVcs()
-                            .revertFile(versionedFile.getFileName());
-                } else {
-                    JOptionPane.showMessageDialog(App.getInstance().getMainFrame(),
-                            "Unsupported operation");
-                }
-            } else {
-                JOptionPane.showMessageDialog(App.getInstance().getMainFrame(),
-                        "Please select some file to revert");
-            }
-        });
-
+        revertButton.addActionListener(e -> revertFile());
         return revertButton;
+    }
+
+    protected void refreshVcsStatus() {
+        App.getInstance().getVcs()
+                .refreshStatus();
+    }
+
+    protected void revertFile() {
+        FileStatus versionedFile = versionControl.getSelectedValue();
+        if (versionedFile == null) {
+            showMessage("Please select some file to revert");
+            return;
+        }
+
+        if (!fileCanBeReverted(versionedFile.getStatus())) {
+            showMessage("Unsupported operation");
+            return;
+        }
+
+        versionControl.clearSelection();
+
+        App.getInstance().getVcs()
+                .revertFile(versionedFile.getFileName());
+    }
+
+    protected boolean fileCanBeReverted(FileStatus.Status fileStatus) {
+        return FileStatus.Status.MODIFIED == fileStatus
+                || FileStatus.Status.MISSING == fileStatus;
     }
 
     protected VersionControl initVersionControl() {

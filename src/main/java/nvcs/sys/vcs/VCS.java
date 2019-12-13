@@ -9,13 +9,14 @@ import nvcs.event.project.ProjectOpenedEvent;
 import nvcs.event.vcs.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
 import nvcs.sys.vcs.task.OpenRepoTask;
+import nvcs.sys.vcs.task.RevertFileTask;
 import nvcs.sys.vcs.task.UpdateStatusTask;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
-import javax.swing.JOptionPane;
 import java.io.File;
 import java.util.Set;
+
+import static nvcs.util.Messages.showMessage;
 
 @SuppressWarnings("UnstableApiUsage")
 public class VCS {
@@ -34,7 +35,7 @@ public class VCS {
         eventBus.register(this);
     }
 
-    public void updateStatus() {
+    public void refreshStatus() {
         if (updateStatusTask != null
                 && !updateStatusTask.isDone()) {
             updateStatusTask.cancel(true);
@@ -45,14 +46,8 @@ public class VCS {
     }
 
     public void revertFile(String fileName) {
-        try {
-            repository.checkout()
-                    .addPath(fileName)
-                    .call();
-        } catch (GitAPIException ignored) {
-        }
-
-        updateStatus();
+        new RevertFileTask(fileName, repository, eventBus)
+                .execute();
     }
 
     @Subscribe
@@ -62,9 +57,38 @@ public class VCS {
         if (hasGitFolder(projectDirPath)) {
             openRepository(projectDirPath);
         } else {
-            JOptionPane.showMessageDialog(App.getInstance().getMainFrame(),
-                    "Project is not under version control");
+            showMessage("Project is not under version control");
         }
+    }
+
+    @Subscribe
+    protected void onRepositoryOpened(OpenRepoTask.RepositoryOpenedEvent e) {
+        repository = e.getRepository();
+
+        refreshStatus();
+    }
+
+    @Subscribe
+    protected void onStatusesUpdated(UpdateStatusTask.StatusesUpdatedEvent e) {
+        Set<FileStatus> statuses = e.getStatuses();
+
+        App.getInstance().getEventBus()
+                .post(new VcsStatusIndexedEvent(statuses));
+    }
+
+    @Subscribe
+    protected void onFileSaved(FileSavedEvent e) {
+        refreshStatus();
+    }
+
+    @Subscribe
+    protected void onFileDeleted(FileDeletedEvent e) {
+        refreshStatus();
+    }
+
+    @Subscribe
+    protected void onFileReverted(RevertFileTask.FileRevertedEvent e) {
+        refreshStatus();
     }
 
     /**
@@ -81,31 +105,6 @@ public class VCS {
 
         return files != null
                 && files.length == 1;
-    }
-
-    @Subscribe
-    protected void onRepositoryOpenedEvent(OpenRepoTask.RepositoryOpenedEvent e) {
-        repository = e.getRepository();
-
-        updateStatus();
-    }
-
-    @Subscribe
-    protected void onStatusesUpdatedEvent(UpdateStatusTask.StatusesUpdatedEvent e) {
-        Set<FileStatus> statuses = e.getStatuses();
-
-        App.getInstance().getEventBus()
-                .post(new VcsStatusIndexedEvent(statuses));
-    }
-
-    @Subscribe
-    protected void onFileSaved(FileSavedEvent e) {
-        updateStatus();
-    }
-
-    @Subscribe
-    protected void onFileDeletedEvent(FileDeletedEvent e) {
-        updateStatus();
     }
 
     protected void openRepository(String projectPath) {

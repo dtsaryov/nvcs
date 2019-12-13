@@ -5,6 +5,7 @@ import nvcs.model.FileStatus;
 import nvcs.ui.component.adapter.AncestorAdapter;
 
 import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -13,6 +14,8 @@ public class VersionControl extends JList<FileStatus> {
     protected VersionListModel model;
 
     public VersionControl() {
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         model = new VersionListModel();
         setModel(model);
 
