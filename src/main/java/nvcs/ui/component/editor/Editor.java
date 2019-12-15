@@ -6,6 +6,7 @@ import nvcs.event.file.FileDeletedEvent;
 import nvcs.event.file.FileOpenedEvent;
 import nvcs.event.file.FileEditingEvent;
 import nvcs.event.file.FileSavedEvent;
+import nvcs.event.project.ProjectOpenedEvent;
 import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.IOUtils;
 
@@ -29,9 +30,15 @@ public class Editor extends JTabbedPane {
                         .register(Editor.this));
     }
 
+    @Subscribe
+    protected void onProjectOpened(ProjectOpenedEvent e) {
+        new ArrayList<>(openedTabs)
+                .forEach(this::removeTab);
+    }
+
     @SuppressWarnings("unused")
     @Subscribe
-    protected void onFileOpenedEvent(FileOpenedEvent e) {
+    protected void onFileOpened(FileOpenedEvent e) {
         String filePath = e.getFilePath();
 
         if (isTabOpened(IOUtils.getFileName(filePath))) {
