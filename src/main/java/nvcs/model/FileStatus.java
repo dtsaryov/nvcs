@@ -5,23 +5,30 @@ package nvcs.model;
  */
 public class FileStatus {
 
-    protected final String fileName;
+    protected final String filePath;
     protected final Status status;
 
     protected boolean dirty;
 
-    public FileStatus(String fileName, Status status) {
-        this(fileName, status, false);
+    public FileStatus(String filePath, Status status) {
+        this(filePath, status, false);
     }
 
-    public FileStatus(String fileName, Status status, boolean dirty) {
-        this.fileName = fileName;
+    public FileStatus(String filePath, Status status, boolean dirty) {
+        this.filePath = filePath;
         this.status = status;
         this.dirty = dirty;
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
     public String getFileName() {
-        return fileName;
+        int slashIdx = filePath.lastIndexOf('/');
+        return slashIdx > 0
+                ? filePath.substring(slashIdx + 1)
+                : filePath;
     }
 
     public Status getStatus() {
@@ -33,11 +40,11 @@ public class FileStatus {
     }
 
     public FileStatus dirty() {
-        return new FileStatus(fileName, status, true);
+        return new FileStatus(filePath, status, true);
     }
 
     public FileStatus clean() {
-        return new FileStatus(fileName, status, false);
+        return new FileStatus(filePath, status, false);
     }
 
     public static FileStatus of(String fileName, Status status) {
@@ -47,7 +54,7 @@ public class FileStatus {
     @Override
     public String toString() {
         return String.format("%s%s (%s)",
-                fileName,
+                filePath,
                 dirty ? " *" : "",
                 status.name().toLowerCase());
     }

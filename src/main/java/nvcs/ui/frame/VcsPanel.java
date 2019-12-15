@@ -90,7 +90,7 @@ public class VcsPanel extends JPanel {
         versionControl.clearSelection();
 
         App.getInstance().getVcs()
-                .revertFile(versionedFile.getFileName());
+                .revertFile(versionedFile.getFilePath());
     }
 
     protected boolean fileCanBeReverted(FileStatus.Status fileStatus) {

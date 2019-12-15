@@ -11,9 +11,9 @@ import javax.annotation.Nullable;
 import javax.swing.DefaultListModel;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
 class VersionListModel extends DefaultListModel<FileStatus> {
@@ -28,12 +28,23 @@ class VersionListModel extends DefaultListModel<FileStatus> {
         Set<FileStatus> statuses = e.getStatuses();
         Map<String, FileStatus> dirtyStatuses = collectDirtyStatuses();
 
+        Set<FileStatus> currentStatuses = new HashSet<>();
+
+        for (FileStatus status : statuses) {
+            FileStatus dirtyStatus = dirtyStatuses.get(status.getFilePath());
+            if (dirtyStatus == null
+                    || dirtyStatus.getStatus() != status.getStatus()) {
+                currentStatuses.add(status);
+            }
+        }
+
+        currentStatuses.addAll(dirtyStatuses.values());
+
         clear();
 
-        Stream.concat(dirtyStatuses.values().stream(), statuses.stream())
-                .sorted(Comparator.comparing(FileStatus::getFileName))
-                .forEach(fs ->
-                        add(getSize(), fs));
+        currentStatuses.stream()
+                .sorted(Comparator.comparing(FileStatus::getFilePath))
+                .forEach(s -> add(getSize(), s));
     }
 
     @Subscribe
@@ -68,7 +79,7 @@ class VersionListModel extends DefaultListModel<FileStatus> {
     protected FileStatus getCurrentStatus(String fileName) {
         for (int i = 0; i < getSize(); i++) {
             FileStatus fileStatus = get(i);
-            if (fileStatus.getFileName()
+            if (fileStatus.getFilePath()
                     .startsWith(fileName)) {
                 return fileStatus;
             }
@@ -81,7 +92,7 @@ class VersionListModel extends DefaultListModel<FileStatus> {
         for (int i = 0; i < getSize(); i++) {
             FileStatus fileStatus = get(i);
             if (fileStatus.isDirty()) {
-                dirtyStatuses.put(fileStatus.getFileName(), fileStatus);
+                dirtyStatuses.put(fileStatus.getFilePath(), fileStatus);
             }
         }
         return dirtyStatuses;
