@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import nvcs.event.file.FileEditingEvent;
 import nvcs.event.file.FileSavedEvent;
 import nvcs.event.project.ProjectOpenedEvent;
+import nvcs.event.vcs.FileRevertedEvent;
 import nvcs.event.vcs.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
 
@@ -24,7 +25,7 @@ class VersionListModel extends DefaultListModel<FileStatus> {
     }
 
     @Subscribe
-    protected void onVcsStatusUpdatedEvent(VcsStatusIndexedEvent e) {
+    protected void onVcsStatusUpdated(VcsStatusIndexedEvent e) {
         Set<FileStatus> statuses = e.getStatuses();
         Map<String, FileStatus> dirtyStatuses = collectDirtyStatuses();
 
@@ -48,7 +49,7 @@ class VersionListModel extends DefaultListModel<FileStatus> {
     }
 
     @Subscribe
-    protected void onFileUpdatedEvent(FileEditingEvent e) {
+    protected void onFileEditing(FileEditingEvent e) {
         String fileName = e.getFileName();
 
         FileStatus currentStatus = getCurrentStatus(fileName);
@@ -60,6 +61,18 @@ class VersionListModel extends DefaultListModel<FileStatus> {
                     fileName,
                     FileStatus.Status.MODIFIED,
                     true));
+        }
+    }
+
+    @Subscribe
+    protected void onFileReverted(FileRevertedEvent e) {
+        String revertedFilePath = e.getFilePath();
+        for (int i = 0; i < getSize(); i++) {
+            FileStatus fileStatus = get(i);
+            if (revertedFilePath.equals(fileStatus.getFilePath())) {
+                remove(i);
+                break;
+            }
         }
     }
 

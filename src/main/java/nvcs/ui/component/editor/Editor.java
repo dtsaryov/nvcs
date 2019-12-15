@@ -94,6 +94,8 @@ public class Editor extends JTabbedPane {
 
         addTab(editorTab.getFileName(), editorTab);
         setTabComponentAt(newTabIdx, editorTab.getTabButton());
+
+        setSelectedIndex(newTabIdx);
     }
 
     protected void removeTab(EditorTab tab) {
