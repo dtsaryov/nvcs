@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
@@ -122,7 +123,9 @@ class ProjectTreeModel extends DefaultTreeModel {
                 }
             }
         } else {
-            addLeaf(parentNode, filePath);
+            if (!parentNode.hasChild(new ModelNode(filePath))) {
+                addLeaf(parentNode, filePath);
+            }
         }
     }
 
@@ -154,6 +157,15 @@ class ProjectTreeModel extends DefaultTreeModel {
         @Override
         public String getUserObject() {
             return (String) super.getUserObject();
+        }
+
+        public boolean hasChild(ModelNode node) {
+            for (ModelNode child : Collections.list(children())) {
+                if (Objects.equals(node.getUserObject(), child.getUserObject())) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @SuppressWarnings("unchecked")
