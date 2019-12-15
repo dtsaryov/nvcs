@@ -27,8 +27,10 @@ public final class IOUtils {
     public static String getFileName(String filePath) {
         checkNotNull(filePath, "Null is passed as file path");
 
-        return filePath.substring(
-                filePath.lastIndexOf(File.separator) + 1);
+        String path = normalizePath(filePath);
+
+        return path.substring(
+                path.lastIndexOf(File.separator) + 1);
     }
 
     /**
@@ -40,7 +42,7 @@ public final class IOUtils {
     public static String loadFile(String filePath) {
         checkNotNull(filePath, "Null is passed as file path");
 
-        File file = new File(filePath);
+        File file = new File(normalizePath(filePath));
 
         try (FileReader reader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(reader)) {
@@ -62,7 +64,7 @@ public final class IOUtils {
         checkNotNull(filePath, "Null is passed as file path");
         checkNotNull(fileContent, "Null is passed as file content");
 
-        File file = new File(filePath);
+        File file = new File(normalizePath(filePath));
 
         try (FileWriter writer = new FileWriter(file);
              BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
@@ -76,10 +78,25 @@ public final class IOUtils {
     public static void deleteFile(String filePath) {
         checkNotNull(filePath, "Null os passed as file path");
 
-        boolean deleteSuccessful = new File(filePath).delete();
+        boolean deleteSuccessful = new File(normalizePath(filePath)).delete();
 
         if (!deleteSuccessful) {
             throw new RuntimeException("Failed to delete file");
+        }
+    }
+
+    /**
+     * Normalizes file path considering {@link File#separator}.
+     *
+     * @param path file o directory path
+     *
+     * @return normalized path
+     */
+    protected static String normalizePath(String path) {
+        if (File.separator.equals("/")) {
+            return path.replace("\\", "/");
+        } else {
+            return path.replace("/", "\\");
         }
     }
 }

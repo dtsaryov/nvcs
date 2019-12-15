@@ -7,12 +7,15 @@ import nvcs.event.file.FileOpenedEvent;
 import nvcs.event.file.FileEditingEvent;
 import nvcs.event.file.FileSavedEvent;
 import nvcs.event.project.ProjectOpenedEvent;
+import nvcs.event.vcs.FileRevertedEvent;
 import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.IOUtils;
 
+import javax.annotation.Nullable;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.AncestorEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +27,8 @@ public class Editor extends JTabbedPane {
 
     protected List<EditorTab> openedTabs = new ArrayList<>();
 
+    protected String projectDir = null;
+
     public Editor() {
         addComponentAttachListener(() ->
                 App.getInstance().getEventBus()
@@ -32,6 +37,8 @@ public class Editor extends JTabbedPane {
 
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
+        projectDir = e.getProjectDir();
+
         new ArrayList<>(openedTabs)
                 .forEach(this::removeTab);
     }
@@ -45,10 +52,26 @@ public class Editor extends JTabbedPane {
             return;
         }
 
+        openFile(filePath);
+    }
+
+    protected void openFile(String filePath) {
         String fileContent = IOUtils.loadFile(filePath);
 
         invokeLater(() ->
                 addTab(createTab(filePath, fileContent)));
+    }
+
+    @Subscribe
+    protected void onFileReverted(FileRevertedEvent e) {
+        String fileName = IOUtils.getFileName(e.getFilePath());
+
+        EditorTab openedTab = getTab(fileName);
+        if (openedTab != null) {
+            removeTab(openedTab);
+
+            openFile(projectDir + File.separator + e.getFilePath());
+        }
     }
 
     protected EditorTab createTab(String filePath, String fileContent) {
@@ -84,6 +107,16 @@ public class Editor extends JTabbedPane {
         return openedTabs.stream()
                 .anyMatch(tab ->
                         Objects.equals(tab.getFileName(), fileName));
+    }
+
+    @Nullable
+    protected EditorTab getTab(String fileName) {
+        for (EditorTab openedTab : openedTabs) {
+            if (fileName.equals(openedTab.getFileName())) {
+                return openedTab;
+            }
+        }
+        return null;
     }
 
     protected int getTabIndex(EditorTab tab) {
