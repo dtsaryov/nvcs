@@ -2,6 +2,7 @@ package nvcs.ui.component.editor;
 
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
+import nvcs.event.file.FileClosedEvent;
 import nvcs.event.file.FileDeletedEvent;
 import nvcs.event.file.FileOpenedEvent;
 import nvcs.event.file.FileEditingEvent;
@@ -150,8 +151,12 @@ public class Editor extends JTabbedPane {
                 break;
             }
             case JOptionPane.NO_OPTION: {
-                invokeLater(() ->
-                        removeTab(tab));
+                invokeLater(() -> {
+                    App.getInstance().getEventBus()
+                            .post(new FileClosedEvent(fileName));
+
+                    removeTab(tab);
+                });
             }
         }
     }

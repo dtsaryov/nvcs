@@ -11,12 +11,12 @@ import javax.swing.event.AncestorEvent;
 @SuppressWarnings("UnstableApiUsage")
 public class VersionControl extends JList<FileStatus> {
 
-    protected VersionListModel model;
+    protected VersionControlModel model;
 
     public VersionControl() {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        model = new VersionListModel();
+        model = new VersionControlModel();
         setModel(model);
 
         addAncestorListener(new AncestorAdapter() {

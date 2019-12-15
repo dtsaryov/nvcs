@@ -3,6 +3,7 @@ package nvcs.sys.vcs;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import nvcs.App;
+import nvcs.event.file.FileClosedEvent;
 import nvcs.event.file.FileDeletedEvent;
 import nvcs.event.file.FileSavedEvent;
 import nvcs.event.project.ProjectOpenedEvent;
@@ -63,6 +64,21 @@ public class VCS {
     }
 
     @Subscribe
+    protected void onFileSaved(FileSavedEvent e) {
+        refreshStatus();
+    }
+
+    @Subscribe
+    protected void onFileDeleted(FileDeletedEvent e) {
+        refreshStatus();
+    }
+
+    @Subscribe
+    protected void onFileClosed(FileClosedEvent e) {
+        refreshStatus();
+    }
+
+    @Subscribe
     protected void onRepositoryOpened(OpenRepoTask.RepositoryOpenedEvent e) {
         repository = e.getRepository();
 
@@ -75,16 +91,6 @@ public class VCS {
 
         App.getInstance().getEventBus()
                 .post(new VcsStatusIndexedEvent(statuses));
-    }
-
-    @Subscribe
-    protected void onFileSaved(FileSavedEvent e) {
-        refreshStatus();
-    }
-
-    @Subscribe
-    protected void onFileDeleted(FileDeletedEvent e) {
-        refreshStatus();
     }
 
     @Subscribe

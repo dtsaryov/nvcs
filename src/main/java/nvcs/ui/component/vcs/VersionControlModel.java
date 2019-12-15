@@ -1,6 +1,7 @@
 package nvcs.ui.component.vcs;
 
 import com.google.common.eventbus.Subscribe;
+import nvcs.event.file.FileClosedEvent;
 import nvcs.event.file.FileEditingEvent;
 import nvcs.event.file.FileSavedEvent;
 import nvcs.event.project.ProjectOpenedEvent;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("UnstableApiUsage")
-class VersionListModel extends DefaultListModel<FileStatus> {
+class VersionControlModel extends DefaultListModel<FileStatus> {
 
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
@@ -67,13 +68,7 @@ class VersionListModel extends DefaultListModel<FileStatus> {
     @Subscribe
     protected void onFileReverted(FileRevertedEvent e) {
         String revertedFilePath = e.getFilePath();
-        for (int i = 0; i < getSize(); i++) {
-            FileStatus fileStatus = get(i);
-            if (revertedFilePath.equals(fileStatus.getFilePath())) {
-                remove(i);
-                break;
-            }
-        }
+        removeDirtyStatus(revertedFilePath);
     }
 
     @Subscribe
@@ -83,6 +78,22 @@ class VersionListModel extends DefaultListModel<FileStatus> {
             FileStatus fileStatus = get(i);
             if (fileName.equals(fileStatus.getFileName())) {
                 set(i, fileStatus.clean());
+                break;
+            }
+        }
+    }
+
+    @Subscribe
+    protected void onFileClosed(FileClosedEvent e) {
+        String revertedFilePath = e.getFileName();
+        removeDirtyStatus(revertedFilePath);
+    }
+
+    protected void removeDirtyStatus(String revertedFilePath) {
+        for (int i = 0; i < getSize(); i++) {
+            FileStatus fileStatus = get(i);
+            if (revertedFilePath.equals(fileStatus.getFilePath())) {
+                remove(i);
                 break;
             }
         }
