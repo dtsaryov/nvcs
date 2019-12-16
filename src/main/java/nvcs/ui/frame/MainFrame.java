@@ -58,7 +58,7 @@ public class MainFrame extends JFrame {
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
         split.setTopComponent(new WorkAreaFrame());
-        split.setBottomComponent(new VcsPanel());
+        split.setBottomComponent(new VcsFrame());
 
         setContentPane(split);
 

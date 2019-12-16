@@ -44,7 +44,7 @@ class ProjectTreeModel extends DefaultTreeModel {
 
     @SuppressWarnings("unused")
     @Subscribe
-    protected void onProjectIndexedEvent(ProjectIndexedEvent e) {
+    protected void onProjectIndexed(ProjectIndexedEvent e) {
         this.project = e.getProject();
 
         invokeLater(() ->
@@ -53,7 +53,7 @@ class ProjectTreeModel extends DefaultTreeModel {
 
     @SuppressWarnings("unused")
     @Subscribe
-    protected void onFileDeletedEvent(FileDeletedEvent e) {
+    protected void onFileDeleted(FileDeletedEvent e) {
         deleteNode(((ModelNode) getRoot()), e.getFileName());
     }
 

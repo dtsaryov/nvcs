@@ -39,7 +39,7 @@ public class ProjectIndexer {
 
     @SuppressWarnings("unused")
     @Subscribe
-    protected void onIndexedEvent(ProjectIndexingTask.IndexedEvent e) {
+    protected void onProjectIndexed(ProjectIndexingTask.IndexedEvent e) {
         App.getInstance().getEventBus()
                 .post(new ProjectIndexedEvent(e.getProject()));
     }

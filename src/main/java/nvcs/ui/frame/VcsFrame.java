@@ -15,14 +15,14 @@ import static nvcs.util.Messages.showMessage;
 import static nvcs.util.UIUtils.onShow;
 
 @SuppressWarnings("UnstableApiUsage")
-public class VcsPanel extends JPanel {
+public class VcsFrame extends JPanel {
 
     protected final VersionControl versionControl;
 
     protected JButton refreshButton = null;
     protected JButton revertButton = null;
 
-    public VcsPanel() {
+    public VcsFrame() {
         UIUtils.expandLayout(this);
 
         initButtonsPanel();
@@ -31,7 +31,7 @@ public class VcsPanel extends JPanel {
 
         onShow(this, () ->
                 App.getInstance().getEventBus()
-                        .register(VcsPanel.this));
+                        .register(VcsFrame.this));
     }
 
     @SuppressWarnings("unused")
