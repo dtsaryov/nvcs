@@ -60,6 +60,7 @@ public class VCS {
                 .execute();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
         String projectDirPath = e.getProjectDir();
@@ -71,21 +72,25 @@ public class VCS {
         }
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileSaved(FileSavedEvent e) {
         refreshStatus();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileDeleted(FileDeletedEvent e) {
         refreshStatus();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileClosed(FileClosedEvent e) {
         refreshStatus();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onRepositoryOpened(OpenRepoTask.RepositoryOpenedEvent e) {
         repository = e.getRepository();
@@ -93,6 +98,7 @@ public class VCS {
         refreshStatus();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onStatusesUpdated(UpdateStatusTask.StatusesUpdatedEvent e) {
         Set<FileStatus> statuses = e.getStatuses();
@@ -101,6 +107,7 @@ public class VCS {
                 .post(new VcsStatusIndexedEvent(statuses));
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileReverted(RevertFileTask.FileRevertedEvent e) {
         App.getInstance().getEventBus()

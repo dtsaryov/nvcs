@@ -34,6 +34,7 @@ public class VcsPanel extends JPanel {
                         .register(VcsPanel.this));
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onVcsStatusIndexed(VcsStatusIndexedEvent e) {
         refreshButton.setEnabled(true);

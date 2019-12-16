@@ -32,13 +32,11 @@ public class Project {
         protected final String name;
         protected final boolean directory;
 
-        protected final ProjectNode parent;
         protected List<ProjectNode> children;
 
-        public ProjectNode(String name, boolean directory, ProjectNode parent) {
+        public ProjectNode(String name, boolean directory) {
             this.name = name;
             this.directory = directory;
-            this.parent = parent;
         }
 
         public String getName() {

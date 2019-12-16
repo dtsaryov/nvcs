@@ -25,6 +25,7 @@ public class ProjectIndexer {
         eventBus.register(this);
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
         if (indexingTask != null
@@ -36,6 +37,7 @@ public class ProjectIndexer {
         indexingTask.execute();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onIndexedEvent(ProjectIndexingTask.IndexedEvent e) {
         App.getInstance().getEventBus()

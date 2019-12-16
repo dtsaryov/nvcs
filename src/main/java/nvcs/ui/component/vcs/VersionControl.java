@@ -11,7 +11,7 @@ import static nvcs.util.UIUtils.onShow;
 @SuppressWarnings("UnstableApiUsage")
 public class VersionControl extends JList<FileStatus> {
 
-    protected VersionControlModel model;
+    protected final VersionControlModel model;
 
     public VersionControl() {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

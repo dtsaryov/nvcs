@@ -25,7 +25,7 @@ import static nvcs.util.UIUtils.onShow;
 @SuppressWarnings("UnstableApiUsage")
 public class Editor extends JTabbedPane {
 
-    protected List<EditorTab> openedTabs = new ArrayList<>();
+    protected final List<EditorTab> openedTabs = new ArrayList<>();
 
     protected String projectDir = null;
 
@@ -35,6 +35,7 @@ public class Editor extends JTabbedPane {
                         .register(Editor.this));
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
         projectDir = e.getProjectDir();
@@ -62,6 +63,7 @@ public class Editor extends JTabbedPane {
                 addTab(createTab(filePath, fileContent)));
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileReverted(FileRevertedEvent e) {
         String fileName = IOUtils.getFileName(e.getFilePath());

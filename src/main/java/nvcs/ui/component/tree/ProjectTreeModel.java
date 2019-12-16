@@ -36,11 +36,13 @@ class ProjectTreeModel extends DefaultTreeModel {
         return project;
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
         setRoot(new ModelNode("Importing..."));
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onProjectIndexedEvent(ProjectIndexedEvent e) {
         this.project = e.getProject();
@@ -49,11 +51,13 @@ class ProjectTreeModel extends DefaultTreeModel {
                 setRoot(buildTree(this.project.getRoot())));
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileDeletedEvent(FileDeletedEvent e) {
         deleteNode(((ModelNode) getRoot()), e.getFileName());
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileReverted(FileRevertedEvent e) {
         revertNode(((ModelNode) getRoot()), e.getFilePath());

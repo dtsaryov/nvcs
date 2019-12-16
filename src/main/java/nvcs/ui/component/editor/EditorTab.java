@@ -17,7 +17,6 @@ import java.util.function.Consumer;
  */
 class EditorTab extends JScrollPane {
 
-    protected final String filePath;
     protected final String fileName;
 
     protected String fileContent;
@@ -32,7 +31,6 @@ class EditorTab extends JScrollPane {
     protected Consumer<EditorTab> updateListener;
 
     public EditorTab(String filePath, String fileContent) {
-        this.filePath = filePath;
         this.fileName = IOUtils.getFileName(filePath);
         this.fileContent = fileContent;
 

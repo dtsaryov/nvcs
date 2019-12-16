@@ -8,7 +8,7 @@ public class FileStatus {
     protected final String filePath;
     protected final Status status;
 
-    protected boolean dirty;
+    protected final boolean dirty;
 
     public FileStatus(String filePath, Status status) {
         this(filePath, status, false);

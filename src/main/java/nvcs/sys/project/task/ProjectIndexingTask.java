@@ -46,22 +46,22 @@ public class ProjectIndexingTask extends SwingWorker<Project, Void> {
     protected Project doInBackground() {
         File rootDir = new File(projectDir);
 
-        ProjectNode rootNode = index(rootDir, null);
+        ProjectNode rootNode = index(rootDir);
 
         project = new Project(rootNode, projectDir);
 
         return project;
     }
 
-    protected ProjectNode index(File file, ProjectNode parentNode) {
-        ProjectNode node = new ProjectNode(file.getName(), file.isDirectory(), parentNode);
+    protected ProjectNode index(File file) {
+        ProjectNode node = new ProjectNode(file.getName(), file.isDirectory());
 
         if (file.isDirectory()) {
             File[] children = file.listFiles();
             if (children != null) {
                 List<ProjectNode> childNodes = Arrays.stream(children)
                         .filter(f -> PROJECT_NODES_REGEX.matcher(f.getName()).matches())
-                        .map(f -> index(f, parentNode))
+                        .map(this::index)
                         .collect(Collectors.toList());
 
                 node.setChildren(childNodes);

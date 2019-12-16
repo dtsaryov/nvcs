@@ -20,11 +20,13 @@ import java.util.Set;
 @SuppressWarnings("UnstableApiUsage")
 class VersionControlModel extends DefaultListModel<FileStatus> {
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onProjectOpened(ProjectOpenedEvent e) {
         clear();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onVcsStatusUpdated(VcsStatusIndexedEvent e) {
         Set<FileStatus> statuses = e.getStatuses();
@@ -49,6 +51,7 @@ class VersionControlModel extends DefaultListModel<FileStatus> {
                 .forEach(s -> add(getSize(), s));
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileEditing(FileEditingEvent e) {
         String fileName = e.getFileName();
@@ -65,12 +68,14 @@ class VersionControlModel extends DefaultListModel<FileStatus> {
         }
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileReverted(FileRevertedEvent e) {
         String revertedFilePath = e.getFilePath();
         removeDirtyStatus(revertedFilePath);
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileSaved(FileSavedEvent e) {
         String fileName = e.getFileName();
@@ -83,6 +88,7 @@ class VersionControlModel extends DefaultListModel<FileStatus> {
         }
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     protected void onFileClosed(FileClosedEvent e) {
         String revertedFilePath = e.getFileName();
