@@ -9,19 +9,18 @@ import nvcs.event.file.FileEditingEvent;
 import nvcs.event.file.FileSavedEvent;
 import nvcs.event.project.ProjectOpenedEvent;
 import nvcs.event.vcs.FileRevertedEvent;
-import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.IOUtils;
 
 import javax.annotation.Nullable;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-import javax.swing.event.AncestorEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static javax.swing.SwingUtilities.invokeLater;
+import static nvcs.util.UIUtils.onShow;
 
 @SuppressWarnings("UnstableApiUsage")
 public class Editor extends JTabbedPane {
@@ -31,7 +30,7 @@ public class Editor extends JTabbedPane {
     protected String projectDir = null;
 
     public Editor() {
-        addComponentAttachListener(() ->
+        onShow(this, () ->
                 App.getInstance().getEventBus()
                         .register(Editor.this));
     }
@@ -212,14 +211,5 @@ public class Editor extends JTabbedPane {
                 null,
                 null,
                 JOptionPane.NO_OPTION);
-    }
-
-    protected void addComponentAttachListener(Runnable listener) {
-        addAncestorListener(new AncestorAdapter() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                listener.run();
-            }
-        });
     }
 }

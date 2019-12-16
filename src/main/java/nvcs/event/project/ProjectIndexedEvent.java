@@ -4,8 +4,6 @@ import nvcs.model.Project;
 
 /**
  * The event is fired when the project is indexed.
- * <p>
- * Contains project structure in {@link ProjectIndexedEvent#getProject()}.
  */
 public class ProjectIndexedEvent {
 

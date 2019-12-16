@@ -2,6 +2,7 @@ package nvcs.sys.vcs.task;
 
 import com.google.common.eventbus.EventBus;
 import nvcs.model.FileStatus;
+import nvcs.sys.vcs.VCS;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -12,6 +13,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * The task is used to update project version control status.
+ *
+ * @see VCS
+ */
 @SuppressWarnings({"UnstableApiUsage", "InnerClassMayBeStatic"})
 public class UpdateStatusTask extends SwingWorker<Set<FileStatus>, Void> {
 

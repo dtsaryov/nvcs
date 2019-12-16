@@ -2,8 +2,6 @@ package nvcs.event.file;
 
 /**
  * The event is fired when project file is opened.
- * <p>
- * Contains file path in {@link FileOpenedEvent#getFilePath()}.
  */
 public class FileOpenedEvent {
 

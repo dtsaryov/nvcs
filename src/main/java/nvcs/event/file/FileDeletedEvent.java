@@ -1,7 +1,9 @@
 package nvcs.event.file;
 
+import nvcs.ui.component.editor.Editor;
+
 /**
- * The event is fired when project file is deleted.
+ * The event is fired when project file is deleted in {@link Editor}.
  */
 public class FileDeletedEvent {
 

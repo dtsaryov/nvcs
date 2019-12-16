@@ -75,6 +75,11 @@ public final class IOUtils {
         }
     }
 
+    /**
+     * Deletes the file with the given {@code filePath}.
+     *
+     * @param filePath path of file to delete
+     */
     public static void deleteFile(String filePath) {
         checkNotNull(filePath, "Null os passed as file path");
 

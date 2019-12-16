@@ -2,8 +2,6 @@ package nvcs.event.project;
 
 /**
  * The event is fired when the project directory is opened.
- * <p>
- * Contains project root directory in {@link ProjectOpenedEvent#getProjectDir()}.
  */
 public class ProjectOpenedEvent {
 

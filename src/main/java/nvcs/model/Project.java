@@ -5,8 +5,6 @@ import java.util.List;
 
 /**
  * A class represents imported project.
- * <p>
- * Root of project can be obtained via {@link Project#getRoot()} method.
  */
 public class Project {
 

@@ -1,5 +1,10 @@
 package nvcs.event.vcs;
 
+import nvcs.sys.vcs.VCS;
+
+/**
+ * The event is fired when project file is reverted by {@link VCS}.
+ */
 public class FileRevertedEvent {
 
     protected final String filePath;

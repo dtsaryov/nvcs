@@ -37,6 +37,9 @@ public class VCS {
         eventBus.register(this);
     }
 
+    /**
+     * Refreshes opened project version control status.
+     */
     public void refreshStatus() {
         if (updateStatusTask != null
                 && !updateStatusTask.isDone()) {
@@ -47,8 +50,13 @@ public class VCS {
         updateStatusTask.execute();
     }
 
-    public void revertFile(String fileName) {
-        new RevertFileTask(fileName, repository, eventBus)
+    /**
+     * Reverts the given project file.
+     *
+     * @param filePath name of file to revert
+     */
+    public void revertFile(String filePath) {
+        new RevertFileTask(filePath, repository, eventBus)
                 .execute();
     }
 

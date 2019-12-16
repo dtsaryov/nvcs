@@ -2,11 +2,11 @@ package nvcs.ui.component.vcs;
 
 import nvcs.App;
 import nvcs.model.FileStatus;
-import nvcs.ui.component.adapter.AncestorAdapter;
 
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.AncestorEvent;
+
+import static nvcs.util.UIUtils.onShow;
 
 @SuppressWarnings("UnstableApiUsage")
 public class VersionControl extends JList<FileStatus> {
@@ -19,12 +19,8 @@ public class VersionControl extends JList<FileStatus> {
         model = new VersionControlModel();
         setModel(model);
 
-        addAncestorListener(new AncestorAdapter() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
+        onShow(this, () ->
                 App.getInstance().getEventBus()
-                        .register(model);
-            }
-        });
+                        .register(model));
     }
 }

@@ -4,16 +4,15 @@ import com.google.common.eventbus.Subscribe;
 import nvcs.App;
 import nvcs.event.vcs.VcsStatusIndexedEvent;
 import nvcs.model.FileStatus;
-import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.ui.component.vcs.VersionControl;
 import nvcs.util.UIUtils;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.AncestorEvent;
 
 import static nvcs.util.Messages.showMessage;
+import static nvcs.util.UIUtils.onShow;
 
 @SuppressWarnings("UnstableApiUsage")
 public class VcsPanel extends JPanel {
@@ -30,13 +29,9 @@ public class VcsPanel extends JPanel {
 
         versionControl = initVersionControl();
 
-        addAncestorListener(new AncestorAdapter() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
+        onShow(this, () ->
                 App.getInstance().getEventBus()
-                        .register(VcsPanel.this);
-            }
-        });
+                        .register(VcsPanel.this));
     }
 
     @Subscribe

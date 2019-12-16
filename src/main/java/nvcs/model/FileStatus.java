@@ -39,10 +39,16 @@ public class FileStatus {
         return dirty;
     }
 
+    /**
+     * @return dirty copy of the file status
+     */
     public FileStatus dirty() {
         return new FileStatus(filePath, status, true);
     }
 
+    /**
+     * @return clean copy of the file status
+     */
     public FileStatus clean() {
         return new FileStatus(filePath, status, false);
     }

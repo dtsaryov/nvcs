@@ -7,10 +7,6 @@ import java.util.Set;
 
 /**
  * The event is fired when project files status is indexed.
- * <p>
- * Contains current file statuses in {@link VcsStatusIndexedEvent#getStatuses()}.
- *
- * @see FileStatus
  */
 public class VcsStatusIndexedEvent {
 

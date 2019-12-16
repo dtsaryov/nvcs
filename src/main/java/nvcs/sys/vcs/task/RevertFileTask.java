@@ -7,6 +7,11 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.SwingWorker;
 
+/**
+ * The task is used to revert project file.
+ *
+ * @see VCS
+ */
 @SuppressWarnings({"UnstableApiUsage", "InnerClassMayBeStatic"})
 public class RevertFileTask extends SwingWorker<Boolean, Void> {
 

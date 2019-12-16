@@ -3,11 +3,9 @@ package nvcs.ui.component.tree;
 import nvcs.App;
 import nvcs.event.file.FileOpenedEvent;
 import nvcs.model.Project;
-import nvcs.ui.component.adapter.AncestorAdapter;
 import nvcs.util.UIUtils;
 
 import javax.swing.JTree;
-import javax.swing.event.AncestorEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import java.awt.event.MouseAdapter;
@@ -15,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Stack;
 import java.util.function.Consumer;
+
+import static nvcs.util.UIUtils.onShow;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ProjectTree extends JTree {
@@ -25,7 +25,7 @@ public class ProjectTree extends JTree {
         TreeModel model = new ProjectTreeModel();
         setModel(model);
 
-        addComponentAttachListener(() ->
+        onShow(this, () ->
                 App.getInstance().getEventBus()
                         .register(model));
 
@@ -65,15 +65,6 @@ public class ProjectTree extends JTree {
         }
 
         return filePath.toString();
-    }
-
-    protected void addComponentAttachListener(Runnable listener) {
-        addAncestorListener(new AncestorAdapter() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                listener.run();
-            }
-        });
     }
 
     protected void addDoubleClickListener(Consumer<DefaultMutableTreeNode> listener) {

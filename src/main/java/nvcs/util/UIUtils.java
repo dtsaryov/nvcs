@@ -3,7 +3,10 @@ package nvcs.util;
 import net.miginfocom.layout.CC;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import nvcs.ui.component.adapter.AncestorAdapter;
 
+import javax.swing.*;
+import javax.swing.event.AncestorEvent;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -65,5 +68,20 @@ public final class UIUtils {
 
         ((MigLayout) layoutManager)
                 .setComponentConstraints(component, componentConstraints);
+    }
+
+    /**
+     * Subscribes the given {@code component} on show event.
+     *
+     * @param component component
+     * @param listener  listener that will be triggered on component show
+     */
+    public static void onShow(JComponent component, Runnable listener) {
+        component.addAncestorListener(new AncestorAdapter() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                listener.run();
+            }
+        });
     }
 }

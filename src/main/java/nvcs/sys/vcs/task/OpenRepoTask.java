@@ -1,12 +1,18 @@
 package nvcs.sys.vcs.task;
 
 import com.google.common.eventbus.EventBus;
+import nvcs.sys.vcs.VCS;
 import org.eclipse.jgit.api.Git;
 
 import javax.swing.SwingWorker;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * The task is used to import project git repository.
+ *
+ * @see VCS
+ */
 @SuppressWarnings({"UnstableApiUsage", "InnerClassMayBeStatic"})
 public class OpenRepoTask extends SwingWorker<Git, Void> {
 
